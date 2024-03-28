@@ -3,9 +3,9 @@ env:
   git-credential-helper: yes
   shell: bash
 phases:
-  install:
-    runtime-versions:
-      #docker: 20
+#  install:
+#    runtime-versions:
+#      docker: 20
       #nodejs: 12
   pre_build:
     commands:
