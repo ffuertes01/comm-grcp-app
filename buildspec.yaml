@@ -45,8 +45,8 @@ phases:
       #- CONTAINER_IMAGE_TAG="$(node -e "console.log(require('./package.json').version);")"
       # Build the Docker images
       - echo Building the grpcserver Docker image...
-      - cd /app/grpcserver
-      - docker build . -t grpc-server
+      #- cd app/grpcserver
+      - docker build app/grpcserver/. -t grpc-server
       - docker tag grpc-server:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:grpc-server     
       - docker images
       #- docker build -t lukondefmwila/express-test:$CONTAINER_IMAGE_TAG .
