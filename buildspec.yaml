@@ -25,29 +25,30 @@ phases:
       - echo Logging in to ECR...
       #- aws --version
       #- aws sts get-caller-identity
-      - aws ecr get-login-password --region $AWS_DEFAULT_REGION  
-      #- aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+      #- aws ecr get-login-password --region $AWS_DEFAULT_REGION  
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
       - echo "Changing to application directory..."
       - cd app
       - pwd
+      - ls -l
       ## Install nodejs application dependencies
       #- echo "Installing dependencies..."
       #- npm install
 
-  build:
-    commands:
-      - echo Build started on `date`
+  #build:
+    #commands:
+      #- echo Build started on `date`
       ## Run test
       #- echo Run node.js tests...
       #- npm run test
       ## Get application version 
       #- CONTAINER_IMAGE_TAG="$(node -e "console.log(require('./package.json').version);")"
       # Build the Docker images
-      - echo Building the grpcserver Docker image...
-      - cd grpcserver
-      - docker build . -t grpc-server
-      - docker images
+      #- echo Building the grpcserver Docker image...
+      #- cd grpcserver
+      #- docker build . -t grpc-server
+      #- docker images
       #- docker build -t lukondefmwila/express-test:$CONTAINER_IMAGE_TAG .
       # Log in to the Docker CLI
-      - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
-      - cd ..
+      #- echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+      #- cd ..
