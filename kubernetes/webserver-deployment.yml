@@ -1,0 +1,25 @@
+apiVersion: apps/v1												
+kind: Deployment										
+metadata:												
+  name: webserver-deployment		
+  labels:												
+    app: webserver						
+    type: front-end
+spec:													
+  template:
+    metadata:												
+      name: webserver-pod						
+      labels:												
+        app: webserver						
+        type: front-end						
+    spec:													
+      containers:											
+        - name: webserver-container						
+          image: 260224488673.dkr.ecr.us-east-1.amazonaws.com/comm-repo:web-server
+          ports:
+            - containerPort: 8080
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webserver
+      type: front-end
