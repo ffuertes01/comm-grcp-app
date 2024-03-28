@@ -1,0 +1,25 @@
+apiVersion: apps/v1												
+kind: Deployment										
+metadata:												
+  name: grpcserver-deployment		
+  labels:												
+    app: grpcserver						
+    type: back-end
+spec:													
+  template:
+    metadata:												
+      name: grpcserver-pod						
+      labels:												
+        app: grpcserver						
+        type: back-end						
+    spec:													
+      containers:											
+        - name: grpcserver-container						
+          image: 260224488673.dkr.ecr.us-east-1.amazonaws.com/comm-repo:grpc-server
+          ports:
+            - containerPort: 50051
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grpcserver
+      type: back-end
