@@ -13,13 +13,13 @@ phases:
   #    - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
       - aws configure set region $AWS_DEFAULT_REGION
       - echo $KUBE_SECRET_NAME
-      - SECRET_JSON=$(aws secretsmanager get-secret-value --secret-id kubeconfig --query 'SecretString' --output text)
+      - SECRET_JSON=$(aws secretsmanager get-secret-value --secret-id $KUBE_SECRET_NAME --query 'SecretString' --output text)
       - echo "$SECRET_JSON" > kubeconfig.yaml
       - cat kubeconfig.yaml
       - whoami
-      - ls -l ~/.kube
       - export KUBECONFIG=kubeconfig.yaml
       - aws eks --region us-east-1 update-kubeconfig --name comm-cluster
+      - ls -la /root/*
   #    - |
   #      SECRET_JSON=$(aws secretsmanager get-secret-value --secret-id $KUBE_SECRET_NAME --query 'SecretString' --output text)
   #      echo "$SECRET_JSON" > kubeconfig.yaml
