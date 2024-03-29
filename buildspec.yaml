@@ -64,7 +64,7 @@ phases:
       # este si - aws eks --region us-east-1 update-kubeconfig --name comm-cluster
       #- cat $KUBECONFIG
       - cd kubernetes
-      - kubectl apply -f *.yml
+      - kubectl apply -f '*.yml'
       #- kubectl get pods -A
       #- kubectl ged deployment -A
       # Apply changes to our Application using kubectl

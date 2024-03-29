@@ -1,7 +1,8 @@
 apiVersion: apps/v1												
 kind: Deployment										
 metadata:												
-  name: grpcserver-deployment		
+  name: grpcserver-deployment	
+  namespace: commapp	
   labels:												
     app: grpcserver						
     type: back-end
