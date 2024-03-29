@@ -18,7 +18,7 @@ phases:
       - cat kubeconfig.yaml
       - chmod 644 kubeconfig.yaml
       - pwd
-      - export KUBECONFIG=kubeconfig.yaml
+      - export KUBECONFIG=$CODEBUILD_SRC_DIR/kubeconfig.yaml
       - echo $KUBECONFIG
       - aws eks --region us-east-1 update-kubeconfig --name comm-cluster
       - cd /root
