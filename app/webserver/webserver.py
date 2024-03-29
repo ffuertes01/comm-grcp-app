@@ -5,7 +5,7 @@ import comm_pb2_grpc
 
 app = Flask(__name__)
 # server_address = 'grpc-server:50051'
-server_address = 'grpcserver-svc.commapp.svc.cluster.local:50051'
+server_address = 'grpcserver-svc.default.svc.cluster.local:50051'
 channel = grpc.insecure_channel(server_address)
 stub = comm_pb2_grpc.CommunicationStub(channel)
 
