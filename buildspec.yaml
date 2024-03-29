@@ -65,6 +65,7 @@ phases:
       - cat $KUBECONFIG
       - kubectl get nodes
       - kubectl get pods -A
+      - kubectl ged deployment -A
       # Apply changes to our Application using kubectl
       #- echo "Apply changes to kube manifests"            
       #- kubectl apply -f kube-manifests/
