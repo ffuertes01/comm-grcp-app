@@ -16,12 +16,16 @@ phases:
       - SECRET_JSON=$(aws secretsmanager get-secret-value --secret-id $KUBE_SECRET_NAME --query 'SecretString' --output text)
       - echo "$SECRET_JSON" > kubeconfig.yaml
       - cat kubeconfig.yaml
+      - pwd
       - whoami
       - export KUBECONFIG=kubeconfig.yaml
       - aws eks --region us-east-1 update-kubeconfig --name comm-cluster
       - cd /root
       - ls -la 
       - cat /codebuild/output/src*/src/kubeconfig.yaml
+      - mkdir -p $HOME/.kube
+      - cat kubeconfig.yaml > $HOME/.kube/config
+      - chown $(id -u):$(id -g) $HOME/.kube/config
   #    - |
   #      SECRET_JSON=$(aws secretsmanager get-secret-value --secret-id $KUBE_SECRET_NAME --query 'SecretString' --output text)
   #      echo "$SECRET_JSON" > kubeconfig.yaml
