@@ -24,7 +24,7 @@ phases:
       - ls -la 
       - cat /codebuild/output/src*/src/kubeconfig.yaml
       - mkdir -p $HOME/.kube
-      - cat kubeconfig.yaml > $HOME/.kube/config
+      - cat /codebuild/output/src*/src/kubeconfig.yaml > $HOME/.kube/config
       - chown $(id -u):$(id -g) $HOME/.kube/config
   #    - |
   #      SECRET_JSON=$(aws secretsmanager get-secret-value --secret-id $KUBE_SECRET_NAME --query 'SecretString' --output text)
