@@ -62,6 +62,7 @@ phases:
       # este si - echo "Update Kube Config"      
       #- aws eks update-kubeconfig --name $EKS_CLUSTER_NAME
       # este si - aws eks --region us-east-1 update-kubeconfig --name comm-cluster
+      - cat $KUBECONFIG
       - kubectl get nodes
       # Apply changes to our Application using kubectl
       #- echo "Apply changes to kube manifests"            
