@@ -15,16 +15,16 @@ phases:
       - echo $KUBE_SECRET_NAME
       - SECRET_JSON=$(aws secretsmanager get-secret-value --secret-id $KUBE_SECRET_NAME --query 'SecretString' --output text)
       - echo "$SECRET_JSON" > kubeconfig.yaml
-      - cat kubeconfig.yaml
+  #    - cat kubeconfig.yaml
       - chmod 644 kubeconfig.yaml
-      - pwd
+  #    - pwd
       - export KUBECONFIG=$CODEBUILD_SRC_DIR/kubeconfig.yaml
-      - echo $KUBECONFIG
+  #    - echo $KUBECONFIG
       - aws eks --region us-east-1 update-kubeconfig --name comm-cluster
-      - cd /root
-      - ls -la 
-      - cat /codebuild/output/src*/src/kubeconfig.yaml
-      - ls -l $CODEBUILD_SRC_DIR
+  #    - cd /root
+  #   - ls -la 
+  #    - cat /codebuild/output/src*/src/kubeconfig.yaml
+  #   - ls -l $CODEBUILD_SRC_DIR
 
 
 
@@ -33,24 +33,24 @@ phases:
   #      echo "$SECRET_JSON" > kubeconfig.yaml
   #    - export KUBECONFIG=kubeconfig.yaml
   
-  #build:
-  #  commands:
-  #    - echo Build started on `date`
-  #    - echo Building the grpcserver Docker image...
-  #    - docker build app/grpcserver/. -t $GRPC_IMAGE_TAG
-  #    - docker tag $GRPC_IMAGE_TAG:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$GRPC_IMAGE_TAG     
-  #    - echo Building the webserver Docker image...
-  #    - docker build app/webserver/. -t $WEB_IMAGE_TAG
-  #    - docker tag $WEB_IMAGE_TAG:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$WEB_IMAGE_TAG     
-  #    - echo Build completed on `date`
-  #    - docker images
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building the grpcserver Docker image...
+      - docker build app/grpcserver/. -t $GRPC_IMAGE_TAG
+      - docker tag $GRPC_IMAGE_TAG:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$GRPC_IMAGE_TAG     
+      - echo Building the webserver Docker image...
+      - docker build app/webserver/. -t $WEB_IMAGE_TAG
+      - docker tag $WEB_IMAGE_TAG:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$WEB_IMAGE_TAG     
+      - echo Build completed on `date`
+      - docker images
 
   post_build:
     commands:
-      # este si - echo "Pushing the grpc-server Docker image to ECR Repo $IMAGE_REPO_NAME"
-      # este si - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$GRPC_IMAGE_TAG
-      # este si - echo "Pushing the  web-server Docker image to ECR Repo $IMAGE_REPO_NAME"
-      # este si - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$WEB_IMAGE_TAG 
+      - echo "Pushing the grpc-server Docker image to ECR Repo $IMAGE_REPO_NAME"
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$GRPC_IMAGE_TAG
+      - echo "Pushing the  web-server Docker image to ECR Repo $IMAGE_REPO_NAME"
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$WEB_IMAGE_TAG 
       # Extracting AWS Credential Information using STS Assume Role for kubectl
       #- echo "Setting Environment Variables related to AWS CLI for Kube Config Setup"          
       #- CREDENTIALS=$(aws sts assume-role --role-arn $EKS_KUBECTL_ROLE_ARN --role-session-name codebuild-kubectl --duration-seconds 900)
@@ -62,10 +62,11 @@ phases:
       # este si - echo "Update Kube Config"      
       #- aws eks update-kubeconfig --name $EKS_CLUSTER_NAME
       # este si - aws eks --region us-east-1 update-kubeconfig --name comm-cluster
-      - cat $KUBECONFIG
-      - kubectl get nodes
-      - kubectl get pods -A
-      - kubectl ged deployment -A
+      #- cat $KUBECONFIG
+      - cd kubernetes
+      - kubectl apply -f *.yml
+      #- kubectl get pods -A
+      #- kubectl ged deployment -A
       # Apply changes to our Application using kubectl
       #- echo "Apply changes to kube manifests"            
       #- kubectl apply -f kube-manifests/
