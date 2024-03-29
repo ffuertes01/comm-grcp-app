@@ -19,7 +19,9 @@ phases:
       - whoami
       - export KUBECONFIG=kubeconfig.yaml
       - aws eks --region us-east-1 update-kubeconfig --name comm-cluster
-      - ls -la /root/*
+      - cd /root
+      - ls -la 
+      - cat /codebuild/output/src3934012731/src/kubeconfig.yaml
   #    - |
   #      SECRET_JSON=$(aws secretsmanager get-secret-value --secret-id $KUBE_SECRET_NAME --query 'SecretString' --output text)
   #      echo "$SECRET_JSON" > kubeconfig.yaml
