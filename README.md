@@ -86,6 +86,18 @@ Sigue estos pasos para configurar la infraestructura y el CI/CD:
 
 8. **Iniciar el Pipeline de Despliegue**: Una vez completados estos pasos, podrás iniciar manualmente el pipeline de despliegue desde AWS CodePipeline o puedes hacer un commit en el repositorio para desencadenar el proceso desde la fuente.
 
+## Uso de la Aplicación
 
+Una vez despliegada la infraestructura y los recursos de Kubernetes, accede a la sección de Load Balancer en la consola de AWS para validar el DNS Name del balanceador creado.
+Para acceder al servidor web usa un navegador o herramienta como curl o Postman, utilizando la URL proporcionada por el ELB creado y el puerto 80. Por ejemplo:
 
+```bash
+http://<load-balancer-dns-name>/message
+
+Se Debería recibir una respuesta indicando que utilice POST para acceder a gRPC.
+
+Para probar la comunicación mediante gRPC, utiliza una herramienta como curl o Postman para enviar un mensaje al servidor web. Por ejemplo, con curl:
+
+```bash
+curl -X POST -H "Content-Type: application/json" -d "{\"message\": \"Hola servidor gRPC\"}" http://<load-balancer-dns-name>/message
 
