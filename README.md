@@ -35,5 +35,26 @@ La infraestructura de la aplicación se implementa utilizando Terraform. Este pr
 
 - **CICD**: En este módulo se crean los proyectos de AWS CodeBuild y AWS CodePipeline, los cuales se encargan de realizar la integración continua y la entrega continua (CI/CD) del código de la aplicación desde el repositorio de GitHub hacia el cluster EKS. Asimismo, se crea el repositorio en ECR donde se guardarán las imágenes de Docker, y los buckets de Amazon S3 para almacenar los artefactos.
 
+## CI/CD del Proyecto
+
+Para la integración continua y el despliegue continuo de la aplicación, se hace uso de un Repositorio en GitHub como controlador de versiones y fuente del pipeline, AWS ECR como repositorio de imagenes de Docker, AWS Codebuild para las fases de construcción y despliegue del codigo y AWS Codepipeline como orquestador de todo el proceso. se sigue el siguiente flujo:
+
+Para lograr la integración continua y el despliegue continuo de la aplicación, se emplean herramientas especializadas para cada etapa del ciclo de desarrollo. Utilizamos un Repositorio en GitHub como sistema de control de versiones y fuente central del pipeline. AWS ECR sirve como repositorio para las imágenes de Docker generadas durante el proceso. Además, AWS CodeBuild se encarga de las fases de construcción y despliegue del código, mientras que AWS CodePipeline actúa como orquestador de todo el proceso. El flujo se muestra en la siguiente imagen y se describe mas adelante:
+
+https://github.com/ffuertes01/comm-grcp-app/blob/main/diagrams/cicd.png
+
+![Flujo CI/CD](https://github.com/ffuertes01/comm-grcp-app/blob/main/diagrams/cicd.png)
+
+1. Cuando un desarrollador realiza un cambio o actualización en el código, realiza un commit desde su entorno local hacia el repositorio de GitHub, cuando este commit se integra en la rama "Main" del repositorio CodePipeline inicia el pipeline para el despliegue.
+
+2. CodePipeline detecta los cambios en el repositorio de GitHub, descarga el código del proyecto hacia un bucket de Amazon S3 como un artefacto y activa Codebuild para continuar con las siguientes fases.
+
+3. El proyecto de CodeBuild se compone de tres fases. Comienza con "pre_build", donde se realiza el inicio de sesión en AWS ECR y en el cluster de Amazon Elastic Kubernetes Service (EKS).
+
+4. A continuación, continúa con la fase "build", donde se construyen las imágenes de Docker y se les asigna el respectivo tag.
+
+5. En la fase final "post_build", se envían las imágenes de Docker al repositorio de ECR y, finalmente, se aplican los manifiestos de Kubernetes en el cluster EKS. Esto implica la construcción o modificación de los recursos de la aplicación según lo definido en los manifiestos.
+
+
 
 
