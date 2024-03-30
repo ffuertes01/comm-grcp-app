@@ -57,15 +57,15 @@ Sigue estos pasos para configurar la infraestructura y el CI/CD:
 
 1. **Clonar el Repositorio**: Clona este repositorio en tu cuenta de GitHub.
 
-2. **Configurar Conexion con GitHub**: Accede a AWS CodePipeline > Settings > Connections y crea una nueva conexión de tipo GitHub con el repositorio que aloja la aplicación. Debes autenticarte manualmente en GitHub antes de crear la conexión. Después de crearla, guarda el ARN en un secreto en AWS Secrets Manager llamado `github_token`, utilizando 'CodestarConnection' como key value pair, donde 'CodestarConnection' será la clave y el ARN será el valor.
+2. **Configurar Conexion con GitHub**: Accede a AWS CodePipeline > Settings > Connections y crea una nueva conexión de tipo GitHub con el repositorio que aloja la aplicación. Debes autenticarte manualmente en GitHub antes de crear la conexión. Después de crearla, guarda el ARN en un secreto en AWS Secrets Manager llamado `github_token`, de tipo key/value pair donde `CodestarConnection` será la clave y el ARN será el valor.
 
 3. **Crear S3 Bucket para el estado**: Crea un bucket S3 en AWS para almacenar el estado de forma remota.
 
-4. **Modificar la Configuración de Terraform**: Ubícate en la raíz del directorio 'terraform' en este repositorio. Modifica el bloque de código 'backend' en el archivo main.tf con la información del nuevo bucket S3 creado.
+4. **Modificar la Configuración de Terraform**: Ubícate en la raíz del directorio `terraform` en este repositorio. Modifica el bloque de código `backend` en el archivo main.tf con la información del nuevo bucket S3 creado.
 
-5. **Actualizar Variables de Terraform**: En el archivo variables.tf en el directorio raíz, actualiza los valores 'default' de las variables 'aws_account_id' y 'region' con los valores de tu cuenta de AWS donde se implementará la aplicación. También modifica el valor de 'github_org' con el nombre de usuario de GitHub donde se clonó este repositorio. Puedes dejar iguales o modificar los valores de otras variables según sea necesario.
+5. **Actualizar Variables de Terraform**: En el archivo variables.tf en el directorio raíz, actualiza los valores "default" de las variables `aws_account_id` y `region` con los valores de tu cuenta de AWS donde se implementará la aplicación. También modifica el valor de `github_org` con el nombre de usuario de GitHub donde se clonó este repositorio. Puedes dejar iguales o modificar los valores de otras variables según sea necesario.
 
-6. **Crear la Infraestructura con Terraform**: Desde la raíz del directorio 'terraform', ejecuta los siguientes comandos en la consola:
+6. **Crear la Infraestructura con Terraform**: Desde la raíz del directorio `terraform`, ejecuta los siguientes comandos en la consola:
 
    ```bash
    terraform init
@@ -82,7 +82,7 @@ Sigue estos pasos para configurar la infraestructura y el CI/CD:
      ```bash
      kubectl cluster-info
      ```
-   - Configuración de las Credenciales en AWS Secrets Manager: Ubica el archivo ~/.kube/config en tu sistema local, copia su contenido y pégalo como un nuevo secreto en AWS Secrets Manager llamado "kubeconfig" en formato plaintext.
+   - Configuración de las Credenciales en AWS Secrets Manager: Ubica el archivo `~/.kube/config` en tu sistema local, copia su contenido y pégalo como un nuevo secreto en AWS Secrets Manager llamado `kubeconfig` en formato plaintext.
 
 8. **Iniciar el Pipeline de Despliegue**: Una vez completados estos pasos, podrás iniciar manualmente el pipeline de despliegue desde AWS CodePipeline o puedes hacer un commit en el repositorio para desencadenar el proceso desde la fuente.
 
