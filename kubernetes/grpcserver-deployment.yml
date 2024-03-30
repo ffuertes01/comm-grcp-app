@@ -18,6 +18,10 @@ spec:
           image: 260224488673.dkr.ecr.us-east-1.amazonaws.com/comm-repo:grpc-server
           ports:
             - containerPort: 50051
+          resources:
+            limits:
+              cpu: 500m
+              memory: 128Mi          
   replicas: 1
   selector:
     matchLabels:
