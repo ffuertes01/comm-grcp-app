@@ -41,8 +41,6 @@ Para la integración continua y el despliegue continuo de la aplicación, se hac
 
 Para lograr la integración continua y el despliegue continuo de la aplicación, se emplean herramientas especializadas para cada etapa del ciclo de desarrollo. Utilizamos un Repositorio en GitHub como sistema de control de versiones y fuente central del pipeline. AWS ECR sirve como repositorio para las imágenes de Docker generadas durante el proceso. Además, AWS CodeBuild se encarga de las fases de construcción y despliegue del código, mientras que AWS CodePipeline actúa como orquestador de todo el proceso. El flujo se muestra en la siguiente imagen y se describe mas adelante:
 
-https://github.com/ffuertes01/comm-grcp-app/blob/main/diagrams/cicd.png
-
 ![Flujo CI/CD](https://github.com/ffuertes01/comm-grcp-app/blob/main/diagrams/cicd.png)
 
 1. Cuando un desarrollador realiza un cambio o actualización en el código, realiza un commit desde su entorno local hacia el repositorio de GitHub, cuando este commit se integra en la rama "Main" del repositorio CodePipeline inicia el pipeline para el despliegue.
