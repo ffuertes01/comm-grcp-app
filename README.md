@@ -57,7 +57,7 @@ Sigue estos pasos para configurar la infraestructura y el CI/CD:
 
 1. **Clonar el Repositorio**: Clona este repositorio en tu cuenta de GitHub.
 
-2. **Configurar Conexion con GitHub**: Accede a AWS CodePipeline > Settings > Connections y crea una nueva conexión de tipo GitHub con el repositorio que aloja la aplicación. Debes autenticarte manualmente en GitHub antes de crear la conexión. Después de crearla, guarda el ARN en un secreto en AWS Secrets Manager llamado 'github_token', utilizando 'CodestarConnection' como key value pair, donde 'CodestarConnection' será la clave y el ARN será el valor.
+2. **Configurar Conexion con GitHub**: Accede a AWS CodePipeline > Settings > Connections y crea una nueva conexión de tipo GitHub con el repositorio que aloja la aplicación. Debes autenticarte manualmente en GitHub antes de crear la conexión. Después de crearla, guarda el ARN en un secreto en AWS Secrets Manager llamado `github_token`, utilizando 'CodestarConnection' como key value pair, donde 'CodestarConnection' será la clave y el ARN será el valor.
 
 3. **Crear S3 Bucket para el estado**: Crea un bucket S3 en AWS para almacenar el estado de forma remota.
 
