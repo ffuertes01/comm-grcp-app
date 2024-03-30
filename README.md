@@ -25,19 +25,7 @@ Una vez instalado el cluster EKS, se procede al despliegue de los recursos de la
 
 De esta manera, cuando un usuario accede a la URL del ALB con la ruta configurada en el Ingress, será dirigido al servicio del servidor web. Desde allí, se realizará la petición al servicio del servidor gRPC, y la respuesta se enviará en dirección contraria.
 
-## Despliegue de la Infraestructura
-
-La infraestructura de la aplicación se implementa utilizando Terraform. Este proyecto consta principalmente de 3 módulos reutilizables, los cuales son invocados desde el archivo principal (main.tf). Estos módulos son:
-
-- **Network**: Este módulo implementa la VPC con las subredes públicas y privadas. En estas subredes se habilitan el NAT Gateway, el Internet Gateway, las tablas de rutas, entre otros componentes.
-
-- **EKS**: Aquí se realiza el despliegue del cluster de EKS y del grupo nodegroup donde se instalan las instancias que actuarán como worker nodes en el cluster. Una vez desplegado el cluster, se configura el controlador de Application Load Balancer (ALB) para que EKS pueda generar recursos tipo ALB en AWS mediante Ingress. Finalmente, se establecen los permisos necesarios para que AWS CodeBuild pueda desplegar recursos en el cluster.
-
-- **CICD**: En este módulo se crean los proyectos de AWS CodeBuild y AWS CodePipeline, los cuales se encargan de realizar la integración continua y la entrega continua (CI/CD) del código de la aplicación desde el repositorio de GitHub hacia el cluster EKS. Asimismo, se crea el repositorio en ECR donde se guardarán las imágenes de Docker, y los buckets de Amazon S3 para almacenar los artefactos.
-
 ## CI/CD del Proyecto
-
-Para la integración continua y el despliegue continuo de la aplicación, se hace uso de un Repositorio en GitHub como controlador de versiones y fuente del pipeline, AWS ECR como repositorio de imagenes de Docker, AWS Codebuild para las fases de construcción y despliegue del codigo y AWS Codepipeline como orquestador de todo el proceso. se sigue el siguiente flujo:
 
 Para lograr la integración continua y el despliegue continuo de la aplicación, se emplean herramientas especializadas para cada etapa del ciclo de desarrollo. Utilizamos un Repositorio en GitHub como sistema de control de versiones y fuente central del pipeline. AWS ECR sirve como repositorio para las imágenes de Docker generadas durante el proceso. Además, AWS CodeBuild se encarga de las fases de construcción y despliegue del código, mientras que AWS CodePipeline actúa como orquestador de todo el proceso. El flujo se muestra en la siguiente imagen y se describe mas adelante:
 
@@ -52,6 +40,51 @@ Para lograr la integración continua y el despliegue continuo de la aplicación,
 4. A continuación, continúa con la fase "build", donde se construyen las imágenes de Docker y se les asigna el respectivo tag.
 
 5. En la fase final "post_build", se envían las imágenes de Docker al repositorio de ECR y, finalmente, se aplican los manifiestos de Kubernetes en el cluster EKS. Esto implica la construcción o modificación de los recursos de la aplicación según lo definido en los manifiestos.
+
+## Despliegue de la Infraestructura
+
+La infraestructura de la aplicación se implementa utilizando Terraform. Este proyecto consta principalmente de 3 módulos reutilizables, los cuales son invocados desde el archivo principal (main.tf). Estos módulos son:
+
+- **Network**: Este módulo implementa la VPC con las subredes públicas y privadas. En estas subredes se habilitan el NAT Gateway, el Internet Gateway, las tablas de rutas, entre otros componentes.
+
+- **EKS**: Aquí se realiza el despliegue del cluster de EKS y del grupo nodegroup donde se instalan las instancias que actuarán como worker nodes en el cluster. Una vez desplegado el cluster, se configura el controlador de Application Load Balancer (ALB) para que EKS pueda generar recursos tipo ALB en AWS mediante Ingress. Finalmente, se establecen los permisos necesarios para que AWS CodeBuild pueda desplegar recursos en el cluster.
+
+- **CICD**: En este módulo se crean los proyectos de AWS CodeBuild y AWS CodePipeline, los cuales se encargan de realizar la integración continua y la entrega continua (CI/CD) del código de la aplicación desde el repositorio de GitHub hacia el cluster EKS. Asimismo, se crea el repositorio en ECR donde se guardarán las imágenes de Docker, y los buckets de Amazon S3 para almacenar los artefactos.
+
+### Pasos Para el Despliegue
+
+Sigue estos pasos para configurar la infraestructura y el CI/CD:
+
+1. **Clonar el Repositorio**: Clona este repositorio en tu cuenta de GitHub.
+
+2. **Configurar Conexion con GitHub**: Accede a AWS CodePipeline > Settings > Connections y crea una nueva conexión de tipo GitHub con el repositorio que aloja la aplicación. Debes autenticarte manualmente en GitHub antes de crear la conexión. Después de crearla, guarda el ARN en un secreto en AWS Secrets Manager llamado 'github_token', utilizando 'CodestarConnection' como key value pair, donde 'CodestarConnection' será la clave y el ARN será el valor.
+
+3. **Crear S3 Bucket para el estado**: Crea un bucket S3 en AWS para almacenar el estado de forma remota.
+
+4. **Modificar la Configuración de Terraform**: Ubícate en la raíz del directorio 'terraform' en este repositorio. Modifica el bloque de código 'backend' en el archivo main.tf con la información del nuevo bucket S3 creado.
+
+5. **Actualizar Variables de Terraform**: En el archivo variables.tf en el directorio raíz, actualiza los valores 'default' de las variables 'aws_account_id' y 'region' con los valores de tu cuenta de AWS donde se implementará la aplicación. También modifica el valor de 'github_org' con el nombre de usuario de GitHub donde se clonó este repositorio. Puedes dejar iguales o modificar los valores de otras variables según sea necesario.
+
+6. **Crear la Infraestructura con Terraform**: Desde la raíz del directorio 'terraform', ejecuta los siguientes comandos en la consola:
+
+   ```bash
+   terraform init
+   terraform plan
+   terraform apply
+
+7. **Actualizar Credenciales de EKS**: Una vez completada la creación de la infraestructura, AWS CodePipeline iniciará el pipeline para el despliegue, sin embargo, este proceso fallará debido a que es necesario actualizar las credenciales de EKS para que AWS CodeBuild pueda acceder al cluster. Sigue estos pasos para actualizar las credenciales:
+
+   - Autenticación Local con el Cluster EKS: Utiliza el siguiente comando en tu entorno local para autenticarte con el cluster EKS:
+     ```bash
+     aws eks --region <EKS-region> update-kubeconfig --name comm-cluster
+     ```
+   - Verificación de la Conexión con el Cluster: Confirma la conexión con el cluster utilizando el siguiente comando:
+     ```bash
+     kubectl cluster-info
+     ```
+   - Configuración de las Credenciales en AWS Secrets Manager: Ubica el archivo ~/.kube/config en tu sistema local, copia su contenido y pégalo como un nuevo secreto en AWS Secrets Manager llamado "kubeconfig" en formato plaintext.
+
+8. **Iniciar el Pipeline de Despliegue**: Una vez completados estos pasos, podrás iniciar manualmente el pipeline de despliegue desde AWS CodePipeline o puedes hacer un commit en el repositorio para desencadenar el proceso desde la fuente.
 
 
 
