@@ -93,12 +93,14 @@ Para acceder al servidor web usa un navegador o herramienta como curl o Postman,
 
   ```bash
   http://<load-balancer-dns-name>/message
+  ```
 
-Se debería recibir una respuesta con el texto: 
+Se recibirá una respuesta con el texto: *Hola! Escribe un mensaje para el servidor en formato JSON usando el methodo POST en esta misma URL*
 
 Para probar la comunicación mediante gRPC, utiliza una herramienta como curl o Postman para enviar un mensaje al servidor web. Por ejemplo, con curl:
 
   ```bash
   curl -X POST -H "Content-Type: application/json" -d "{\"message\": \"Hola servidor gRPC\"}" http://<load-balancer-dns-name>/message
-Se obtendrá una respuesta como esta:
+  ```
+Se obtendrá una respuesta como esta: *El mensaje recibido es: Hola servidor gRPC*
 
