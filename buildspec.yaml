@@ -8,12 +8,12 @@ phases:
       - echo Logging in to ECR...
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
       - echo Configuring the EKS Cluster authentication...
-      - aws configure set region $AWS_DEFAULT_REGION
-      - SECRET_JSON=$(aws secretsmanager get-secret-value --secret-id $KUBE_SECRET_NAME --query 'SecretString' --output text)
-      - echo "$SECRET_JSON" > kubeconfig.yaml
-      - chmod 644 kubeconfig.yaml
-      - export KUBECONFIG=$CODEBUILD_SRC_DIR/kubeconfig.yaml
-      - aws eks --region us-east-1 update-kubeconfig --name comm-cluster
+      #- aws configure set region $AWS_DEFAULT_REGION
+      #- SECRET_JSON=$(aws secretsmanager get-secret-value --secret-id $KUBE_SECRET_NAME --query 'SecretString' --output text)
+      #- echo "$SECRET_JSON" > kubeconfig.yaml
+      #- chmod 644 kubeconfig.yaml
+      #- export KUBECONFIG=$CODEBUILD_SRC_DIR/kubeconfig.yaml
+      - aws eks --region $AWS_DEFAULT_REGION update-kubeconfig --name $CLUSTER_NAME
       # Generate Docker Images Tags
       - RANDOMSTR=$(openssl rand -base64 6 | tr -dc 'a-z0-9' | head -c 10)
       - GRPC_TAG=$(echo "grpc-$RANDOMSTR")
