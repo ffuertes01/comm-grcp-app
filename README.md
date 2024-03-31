@@ -35,11 +35,11 @@ Para lograr la integración continua y el despliegue continuo de la aplicación,
 
 2. CodePipeline detecta los cambios en el repositorio de GitHub, descarga el código del proyecto hacia un bucket de Amazon S3 como un artefacto y activa Codebuild para continuar con las siguientes fases.
 
-3. El proyecto de CodeBuild se compone de tres fases. Comienza con "pre_build", donde se realiza el inicio de sesión en AWS ECR y en el cluster de Amazon Elastic Kubernetes Service (EKS).
+3. El proyecto de CodeBuild se compone de tres fases. Comienza con "pre_build", donde se realiza el inicio de sesión en AWS ECR y se configura el acceso al cluster de EKS. Por otra parte se generan las Tags propias del build de las imágenes de Docker.
 
-4. A continuación, continúa con la fase "build", donde se construyen las imágenes de Docker y se les asigna el respectivo tag.
+4. A continuación, continúa con la fase "build", donde se construyen las imágenes de Docker y se les asignan los Tags generados previamente.
 
-5. En la fase final "post_build", se envían las imágenes de Docker al repositorio de ECR y, finalmente, se aplican los manifiestos de Kubernetes en el cluster EKS. Esto implica la construcción o modificación de los recursos de la aplicación según lo definido en los manifiestos.
+5. En la fase final "post_build", se envían las imágenes de Docker al repositorio de ECR, se modifican los manifiestos de los deployments de K8s para añadirle las tags de las imagenes del build y finalmente, se aplican los manifiestos de Kubernetes en el cluster EKS. Esto implica la construcción o modificación de los recursos de la aplicación según lo definido en los manifiestos.
 
 ## Despliegue de la Infraestructura
 
@@ -88,7 +88,7 @@ Sigue estos pasos para configurar la infraestructura y el CI/CD:
 
 ## Uso de la Aplicación
 
-Una vez despliegada la infraestructura y los recursos de Kubernetes, valida la URL del Load Balancer creado mediante el ingress en la consola de AWS.
+Una vez despliegada la infraestructura y los recursos de Kubernetes, valida el `DNS Name` Load Balancer creado mediante el ingress en la consola de AWS.
 Para acceder al servidor web usa un navegador o herramienta como curl o Postman, utilizando la URL proporcionada por el ALB y el puerto 80. Por ejemplo:
 
   ```bash
