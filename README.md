@@ -7,7 +7,7 @@ Esta documento proporciona instrucciones para el despliegue y el uso de una apli
 La aplicación consta de dos partes principales:
 
 1. **Servidor gRPC**: Escucha las solicitudes del cliente, procesa los mensajes y devuelve una respuesta.
-2. **Cliente HTTP**: Proporciona la interfaz para que los usuarios interactúen con el servidor gRPC a través de HTTP.
+2. **Servidor HTTP**: Proporciona la interfaz para que los usuarios interactúen con el servidor gRPC a través de HTTP.
 
 ## Arquitectura de Red
 La siguiente imagen muestra la arquitectura general de red de la aplicación:
