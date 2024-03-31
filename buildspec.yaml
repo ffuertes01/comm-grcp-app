@@ -15,7 +15,7 @@ phases:
       - export KUBECONFIG=$CODEBUILD_SRC_DIR/kubeconfig.yaml
       - aws eks --region us-east-1 update-kubeconfig --name comm-cluster
       # Generate Docker Images Tags
-      - RANDOMSTR=$(openssl rand -base64 8 | tr -dc '[:alnum:]' | head -c 10)
+      - RANDOMSTR=$(openssl rand -base64 6 | tr -dc 'a-z0-9' | head -c 10)
       - GRPC_TAG=$(echo "grpc-$RANDOMSTR")
       - echo $GRPC_ECR_TAG
       - WEB_TAG=$(echo "web-$RANDOMSTR")
