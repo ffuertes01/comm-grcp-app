@@ -1,6 +1,6 @@
 # Despliegue de Aplicación GRPC en AWS EKS
 
-Esta documento proporciona instrucciones para el despliegue y el uso de una aplicación básica en Python alojada en AWS EKS, junto con una explicación de la arquitectura de Red y Despliegue (CI/CD). La aplicación comprende un servidor gRPC expone su servicio, el cual es consumido por un cliente gRPC. Admás, el cliente a su vez expone un servicio HTTP (webserver) para que los usuarios accedan a la aplicación desde Internet.
+Este documento proporciona instrucciones para el despliegue y el uso de una aplicación básica en Python alojada en AWS EKS, junto con una explicación de la arquitectura de Red y Despliegue (CI/CD). La aplicación comprende un servidor gRPC expone su servicio, el cual es consumido por un cliente gRPC. Admás, el cliente a su vez expone un servicio HTTP (webserver) para que los usuarios accedan a la aplicación desde Internet.
 
 ## Descripción de la Aplicación
 
@@ -88,7 +88,7 @@ Sigue estos pasos para configurar la infraestructura y el CI/CD:
 
 ## Uso de la Aplicación
 
-Una vez despliegada la infraestructura y los recursos de Kubernetes, valida el `DNS Name` Load Balancer creado mediante el ingress en la consola de AWS.
+Una vez despliegada la infraestructura y los recursos de Kubernetes, valida el `DNS Name` del Load Balancer creado en la consola de AWS.
 Para acceder al servidor web usa un navegador o herramienta como curl o Postman, utilizando la URL proporcionada por el ALB y el puerto 80. Por ejemplo:
 
   ```bash
