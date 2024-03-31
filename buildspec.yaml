@@ -25,7 +25,7 @@ phases:
       - WEB_ECR_TAG=$(echo "$ECR_REPO_URL:$WEB_TAG")
       - echo $GRPC_ECR_TAG
       - echo $WEB_ECR_TAG
-      - sed -i "s|\WEB-PLACEHOLDER|$WEB_ECR_TAG|g" kubernetes/webserver-deployment.yml
+      - sed -i "s|\replacehere|$WEB_ECR_TAG|g" kubernetes/webserver-deployment.yml
       - cat  kubernetes/webserver-deployment.yml
 
   build:
