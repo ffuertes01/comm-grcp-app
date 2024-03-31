@@ -88,16 +88,17 @@ Sigue estos pasos para configurar la infraestructura y el CI/CD:
 
 ## Uso de la Aplicación
 
-Una vez despliegada la infraestructura y los recursos de Kubernetes, accede a la sección de Load Balancer en la consola de AWS para validar el DNS Name del balanceador creado.
-Para acceder al servidor web usa un navegador o herramienta como curl o Postman, utilizando la URL proporcionada por el ELB creado y el puerto 80. Por ejemplo:
+Una vez despliegada la infraestructura y los recursos de Kubernetes, valida la URL del Load Balancer creado mediante el ingress en la consola de AWS.
+Para acceder al servidor web usa un navegador o herramienta como curl o Postman, utilizando la URL proporcionada por el ALB y el puerto 80. Por ejemplo:
 
-```bash
-http://<load-balancer-dns-name>/message
+  ```bash
+  http://<load-balancer-dns-name>/message
 
-Se Debería recibir una respuesta indicando que utilice POST para acceder a gRPC.
+Se debería recibir una respuesta con el texto: 
 
 Para probar la comunicación mediante gRPC, utiliza una herramienta como curl o Postman para enviar un mensaje al servidor web. Por ejemplo, con curl:
 
-```bash
-curl -X POST -H "Content-Type: application/json" -d "{\"message\": \"Hola servidor gRPC\"}" http://<load-balancer-dns-name>/message
+  ```bash
+  curl -X POST -H "Content-Type: application/json" -d "{\"message\": \"Hola servidor gRPC\"}" http://<load-balancer-dns-name>/message
+Se obtendrá una respuesta como esta:
 
