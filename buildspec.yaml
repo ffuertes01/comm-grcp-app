@@ -1,38 +1,24 @@
 version: 0.2
 env:
-#  git-credential-helper: yes
   shell: bash
 phases:
-#  install:
-#    runtime-versions:
-#      docker: 20
-      #nodejs: 12
   pre_build:
     commands:
+      # Login to ECR
       - echo Logging in to ECR...
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+      - echo Configuring the EKS Cluster authentication...
       - aws configure set region $AWS_DEFAULT_REGION
-      - echo $KUBE_SECRET_NAME
       - SECRET_JSON=$(aws secretsmanager get-secret-value --secret-id $KUBE_SECRET_NAME --query 'SecretString' --output text)
       - echo "$SECRET_JSON" > kubeconfig.yaml
-  #    - cat kubeconfig.yaml
       - chmod 644 kubeconfig.yaml
-  #    - pwd
       - export KUBECONFIG=$CODEBUILD_SRC_DIR/kubeconfig.yaml
-  #    - echo $KUBECONFIG
       - aws eks --region us-east-1 update-kubeconfig --name comm-cluster
-  #    - cd /root
-  #   - ls -la 
-  #    - cat /codebuild/output/src*/src/kubeconfig.yaml
-  #   - ls -l $CODEBUILD_SRC_DIR
+      # Generate Docker Images Tags
+      - RANDOM=$(openssl rand -base64 10 | tr -dc '0-9')
+      - GRPC_IMAGE_TAG=$(echo "grpc-$RANDOM")
+      - WEB_IMAGE_TAG=$(echo "web-$RANDOM")
 
-
-
-  #    - |
-  #      SECRET_JSON=$(aws secretsmanager get-secret-value --secret-id $KUBE_SECRET_NAME --query 'SecretString' --output text)
-  #      echo "$SECRET_JSON" > kubeconfig.yaml
-  #    - export KUBECONFIG=kubeconfig.yaml
-  
   build:
     commands:
       - echo Build started on `date`
@@ -51,32 +37,9 @@ phases:
       - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$GRPC_IMAGE_TAG
       - echo "Pushing the  web-server Docker image to ECR Repo $IMAGE_REPO_NAME"
       - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$WEB_IMAGE_TAG 
-      # Extracting AWS Credential Information using STS Assume Role for kubectl
-      #- echo "Setting Environment Variables related to AWS CLI for Kube Config Setup"          
-      #- CREDENTIALS=$(aws sts assume-role --role-arn $EKS_KUBECTL_ROLE_ARN --role-session-name codebuild-kubectl --duration-seconds 900)
-      #- export AWS_ACCESS_KEY_ID="$(echo ${CREDENTIALS} | jq -r '.Credentials.AccessKeyId')"
-      #- export AWS_SECRET_ACCESS_KEY="$(echo ${CREDENTIALS} | jq -r '.Credentials.SecretAccessKey')"
-      #- export AWS_SESSION_TOKEN="$(echo ${CREDENTIALS} | jq -r '.Credentials.SessionToken')"
-      #- export AWS_EXPIRATION=$(echo ${CREDENTIALS} | jq -r '.Credentials.Expiration')
-      # Setup kubectl with our EKS Cluster              
-      # este si - echo "Update Kube Config"      
-      #- aws eks update-kubeconfig --name $EKS_CLUSTER_NAME
-      # este si - aws eks --region us-east-1 update-kubeconfig --name comm-cluster
-      #- cat $KUBECONFIG
+      - Applying Kubernetes manifests...           
       - cd kubernetes
+      - sed -i "s|\grpc-imagetag|$GRPC_IMAGE_TAG|g" grpcserver-deployment.yml
+      - sed -i "s|\web-imagetag|$WEB_IMAGE_TAG|g" webserver-deployment.yml 
       - kubectl apply -f .
-      #- kubectl get pods -A
-      #- kubectl ged deployment -A
-      # Apply changes to our Application using kubectl
-      #- echo "Apply changes to kube manifests"            
-      #- kubectl apply -f kube-manifests/
-      #- echo "Completed applying changes to Kubernetes Objects"           
-      # Create Artifacts which we can use if we want to continue our pipeline for other stages
-      #- printf '[{"name":"01-DEVOPS-Nginx-Deployment.yml","imageUri":"%s"}]' $REPOSITORY_URI:$TAG > build.json
-      # Additional Commands to view your credentials      
-      #- echo "Credentials Value is..  ${CREDENTIALS}"      
-      #- echo "AWS_ACCESS_KEY_ID...  ${AWS_ACCESS_KEY_ID}"            
-      #- echo "AWS_SECRET_ACCESS_KEY...  ${AWS_SECRET_ACCESS_KEY}"            
-      #- echo "AWS_SESSION_TOKEN...  ${AWS_SESSION_TOKEN}"            
-      #- echo "AWS_EXPIRATION...  $AWS_EXPIRATION"             
-      #- echo "EKS_CLUSTER_NAME...  $EKS_CLUSTER_NAME
+      - echo Post_Build completed on `date`

@@ -15,7 +15,7 @@ spec:
     spec:													
       containers:											
         - name: grpcserver-container						
-          image: 260224488673.dkr.ecr.us-east-1.amazonaws.com/comm-repo:grpc-server
+          image: 260224488673.dkr.ecr.us-east-1.amazonaws.com/comm-repo:grpc-imagetag
           ports:
             - containerPort: 50051
           resources:
