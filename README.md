@@ -1,6 +1,6 @@
 # Despliegue de Aplicación GRPC en AWS EKS
 
-Este documento proporciona instrucciones para la implementación y el uso de una aplicación básica en Python alojada en AWS EKS, ademas de presentar una visión general de la arquitectura de Red y Despliegue (CI/CD). La aplicación comprende un servidor gRPC que expone su servicio, el cual es consumido por un cliente gRPC. A su vez, el cliente ofrece un servicio HTTP para que los usuarios accedan a la aplicación desde Internet.
+Este documento proporciona instrucciones para la implementación y el uso de una aplicación básica en Python alojada en AWS EKS, además de presentar una visión general de la arquitectura de Red y Despliegue (CI/CD). La aplicación comprende un servidor gRPC que expone su servicio, el cual es consumido por un cliente gRPC. A su vez, el cliente ofrece un servicio HTTP para que los usuarios accedan a la aplicación desde Internet.
 
 ## Descripción de la Aplicación
 
@@ -13,7 +13,7 @@ La aplicación consta de dos partes principales:
 La siguiente imagen muestra la arquitectura general de red de la aplicación:
 ![Arquitectura de red](https://github.com/ffuertes01/comm-grcp-app/blob/main/diagrams/network.png)
 
-La arquitectura de red del proyecto se compone de una VPC que incluye tres subredes privadas y tres subredes públicas. Las subredes privadas cuentan con un NAT Gateway que permite el acceso a Internet para descargas de aplicaciones, actualizaciones, etc., sin embargo, no permiten el acceso desde Internet hacia estas subredes. Por otro lado, las subredes públicas cuentan con un Internet Gateway que posibilita el acceso desde y hacia Internet de los recursos desplegados en ellas.
+El proyecto se compone de una VPC que incluye tres subredes privadas y tres subredes públicas. Las subredes privadas cuentan con un NAT Gateway que permite el acceso a Internet para descargas de aplicaciones, actualizaciones, etc., sin embargo, no permiten el acceso desde Internet hacia estas subredes. Por otro lado, las subredes públicas cuentan con un Internet Gateway que posibilita el acceso desde y hacia Internet de los recursos desplegados en ellas.
 
 El cluster de EKS se instala en las subredes privadas, donde se implementará el node group que alojará los worker nodes necesarios para el funcionamiento del cluster.
 
@@ -31,19 +31,19 @@ Para lograr la integración continua y el despliegue continuo de la aplicación,
 
 ![Flujo CI/CD](https://github.com/ffuertes01/comm-grcp-app/blob/main/diagrams/cicd.png)
 
-1. Cuando un desarrollador realiza un cambio o actualización en el código, realiza un commit desde su entorno local hacia el repositorio de GitHub, cuando este commit se integra en la rama "Main" del repositorio CodePipeline inicia el pipeline para el despliegue.
+1. Cuando un desarrollador realiza un cambio o actualización en el código, lo hace a través de un `commit` desde su entorno local hacia el repositorio de GitHub, cuando este commit se integra en la rama `Main` del repositorio CodePipeline inicia el pipeline para el despliegue.
 
 2. CodePipeline detecta los cambios en el repositorio de GitHub, descarga el código del proyecto hacia un bucket de Amazon S3 como un artefacto y activa Codebuild para continuar con las siguientes fases.
 
-3. El proyecto de CodeBuild se compone de tres fases. Comienza con "pre_build", donde se realiza el inicio de sesión en AWS ECR y se configura el acceso al cluster de EKS. Por otra parte se generan las Tags propias del build de las imágenes de Docker.
+3. El proyecto de CodeBuild se compone de tres fases. Comienza con `pre_build`, donde se realiza el inicio de sesión en AWS ECR y se configura el acceso al cluster de EKS. Por otra parte se generan las Tags propias del build de las imágenes de Docker.
 
-4. A continuación, continúa con la fase "build", donde se construyen las imágenes de Docker y se les asignan los Tags generados previamente.
+4. A continuación, continúa con la fase `build`, donde se construyen las imágenes de Docker y se les asignan los Tags generados previamente.
 
-5. En la fase final "post_build", se envían las imágenes de Docker al repositorio de ECR, se modifican los manifiestos de los deployments de K8s para añadirle las tags de las imagenes del build y finalmente, se aplican los manifiestos de Kubernetes en el cluster EKS. Esto implica la construcción o modificación de los recursos de la aplicación según lo definido en los manifiestos.
+5. En la fase final `post_build`, se envían las imágenes de Docker al repositorio de ECR, se modifican los manifiestos de los deployments de K8s para añadirle las tags de las imagenes del build y finalmente, se aplican los manifiestos de Kubernetes en el cluster EKS. Esto implica la construcción o modificación de los recursos de la aplicación según lo definido en los manifiestos.
 
 ## Despliegue de la Infraestructura
 
-La infraestructura de la aplicación se implementa utilizando Terraform. Este proyecto consta principalmente de 3 módulos reutilizables, los cuales son invocados desde el archivo principal (main.tf). Estos módulos son:
+La infraestructura de la aplicación se implementa utilizando Terraform. Este proyecto consta principalmente de 3 módulos reutilizables, los cuales son invocados desde el archivo principal (main.tf):
 
 - **Network**: Este módulo implementa la VPC con las subredes públicas y privadas. En estas subredes se habilitan el NAT Gateway, el Internet Gateway, las tablas de rutas, entre otros componentes.
 
@@ -88,19 +88,19 @@ Sigue estos pasos para configurar la infraestructura y el CI/CD:
 
 ## Uso de la Aplicación
 
-Una vez despliegada la infraestructura y los recursos de Kubernetes, valida el `DNS Name` del Load Balancer creado en la consola de AWS.
+Una vez desplegada la infraestructura y los recursos de Kubernetes, valida el `DNS Name` del Load Balancer creado en la consola de AWS.
 Para acceder al servidor web usa un navegador o herramienta como curl o Postman, utilizando la URL proporcionada por el ALB y el puerto 80. Por ejemplo:
 
   ```bash
   http://<load-balancer-dns-name>/message
   ```
 
-Se recibirá una respuesta con el texto: *Hola! Escribe un mensaje para el servidor en formato JSON usando el methodo POST en esta misma URL*
+Se recibirá una respuesta con el texto: **Hola! Escribe un mensaje para el servidor en formato JSON usando el methodo POST en esta misma URL**
 
-Para probar la comunicación mediante gRPC, utiliza una herramienta como curl o Postman para enviar un mensaje al servidor web. Por ejemplo, con curl:
+Para probar la comunicación mediante gRPC, utiliza una herramienta como curl o Postman para enviar un mensaje al servidor web. Por ejemplo, mediante curl:
 
   ```bash
   curl -X POST -H "Content-Type: application/json" -d "{\"message\": \"Hola servidor gRPC\"}" http://<load-balancer-dns-name>/message
   ```
-Se obtendrá una respuesta como esta: *El mensaje recibido es: Hola servidor gRPC*
+Se obtendrá una respuesta como esta: **El mensaje recibido es: Hola servidor gRPC**
 
