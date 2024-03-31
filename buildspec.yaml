@@ -47,6 +47,7 @@ phases:
       - echo Applying Kubernetes manifests...           
       - cd kubernetes
       - sed -i "s|\GRPC-TAG-PLACEHOLDER|$GRPC_ECR_TAG|g" grpcserver-deployment.yml
+      - echo $WEB_ECR_TAG
       - sed -i "s|\WEB-PLACEHOLDER|$WEB_ECR_TAG|g" webserver-deployment.yml 
       - kubectl apply -f .
       - echo Post_Build completed on `date`
