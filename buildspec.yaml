@@ -17,17 +17,10 @@ phases:
       # Generate Docker Images Tags
       - RANDOMSTR=$(openssl rand -base64 6 | tr -dc 'a-z0-9' | head -c 10)
       - GRPC_TAG=$(echo "grpc-$RANDOMSTR")
-      - echo $GRPC_ECR_TAG
       - WEB_TAG=$(echo "web-$RANDOMSTR")
-      - echo $WEB_TAG
       - ECR_REPO_URL=$(echo "$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME")
       - GRPC_ECR_TAG=$(echo "$ECR_REPO_URL:$GRPC_TAG")
       - WEB_ECR_TAG=$(echo "$ECR_REPO_URL:$WEB_TAG")
-      - echo $GRPC_ECR_TAG
-      - echo $WEB_ECR_TAG
-      - ls -l kubernetes/*
-      - awk -v WEB_ECR_TAG="$WEB_ECR_TAG" '{gsub("WEB-PLACEHOLDER", WEB_ECR_TAG)} 1' kubernetes/webserver-deployment.yml > tmpfile && mv tmpfile kubernetes/webserver-deployment.yml
-      - cat  kubernetes/webserver-deployment.yml
 
   build:
     commands:
@@ -49,7 +42,7 @@ phases:
       - docker push $WEB_ECR_TAG
       - echo Applying Kubernetes manifests...           
       - cd kubernetes
-      - sed -i "s|\GRPC-TAG-PLACEHOLDER|$GRPC_ECR_TAG|g" grpcserver-deployment.yml
-      - echo $WEB_ECR_TAG
+      - awk -v WEB_ECR_TAG="$WEB_ECR_TAG" '{gsub("WEB-TAG-PLACEHOLDER", WEB_ECR_TAG)} 1' webserver-deployment.yml > tmpfile && mv tmpfile webserver-deployment.yml
+      - awk -v GRPC_ECR_TAG="$GRPC_ECR_TAG" '{gsub("GRPC-TAG-PLACEHOLDER", GRPC_ECR_TAG)} 1' grpcserver-deployment.yml > tmpfile && mv tmpfile grpcserver-deployment.yml
       - kubectl apply -f .
       - echo Post_Build completed on `date`
