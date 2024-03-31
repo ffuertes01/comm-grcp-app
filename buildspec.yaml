@@ -17,10 +17,14 @@ phases:
       # Generate Docker Images Tags
       - RANDOMSTR=$(openssl rand -base64 10 | tr -dc '0-9')
       - GRPC_TAG=$(echo "grpc-$RANDOMSTR")
+      - echo $GRPC_ECR_TAG
       - WEB_TAG=$(echo "web-$RANDOMSTR")
+      - echo $WEB_TAG
       - ECR_REPO_URL=$(echo "$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME")
-      - GRPC_ECR_TAG=echo "$ECR_REPO_URL:$GRPC_TAG"
-      - WEB_ECR_TAG=echo "$ECR_REPO_URL:$WEB_TAG"
+      - GRPC_ECR_TAG=$(echo "$ECR_REPO_URL:$GRPC_TAG")
+      - WEB_ECR_TAG=$(echo "$ECR_REPO_URL:$WEB_TAG")
+      - echo $GRPC_ECR_TAG
+      - echo $WEB_ECR_TAG
 
   build:
     commands:
