@@ -25,6 +25,8 @@ phases:
       - WEB_ECR_TAG=$(echo "$ECR_REPO_URL:$WEB_TAG")
       - echo $GRPC_ECR_TAG
       - echo $WEB_ECR_TAG
+      - sed -i "s|\WEB-PLACEHOLDER|$WEB_ECR_TAG|g" kubernetes/webserver-deployment.yml
+      - cat  kubernetes/webserver-deployment.yml
 
   build:
     commands:
@@ -48,6 +50,5 @@ phases:
       - cd kubernetes
       - sed -i "s|\GRPC-TAG-PLACEHOLDER|$GRPC_ECR_TAG|g" grpcserver-deployment.yml
       - echo $WEB_ECR_TAG
-      - sed -i "s|\WEB-PLACEHOLDER|$WEB_ECR_TAG|g" webserver-deployment.yml 
       - kubectl apply -f .
       - echo Post_Build completed on `date`
