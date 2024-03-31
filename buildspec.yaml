@@ -44,7 +44,7 @@ phases:
       - docker push $GRPC_ECR_TAG
       - echo "Pushing the  web-server Docker image to ECR Repo $IMAGE_REPO_NAME"
       - docker push $WEB_ECR_TAG
-      - Applying Kubernetes manifests...           
+      - echo Applying Kubernetes manifests...           
       - cd kubernetes
       - sed -i "s|\GRPC-TAG-PLACEHOLDER|$GRPC_ECR_TAG|g" grpcserver-deployment.yml
       - sed -i "s|\WEB-TAG-PLACEHOLDER|$WEB_ECR_TAG|g" webserver-deployment.yml 
