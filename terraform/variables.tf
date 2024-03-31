@@ -75,7 +75,7 @@ variable "github_secret_name" {
 
 variable "aws_account_id" {
   type        = string
-  default     = "260224488673"
+  default     = "xxxxxxxxx"
 }
 
 variable "ecr_repo_name" {
