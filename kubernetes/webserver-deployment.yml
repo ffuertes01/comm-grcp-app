@@ -15,7 +15,7 @@ spec:
     spec:													
       containers:											
         - name: webserver-container						
-          image: 260224488673.dkr.ecr.us-east-1.amazonaws.com/comm-repo:web-imagetag
+          image: WEB-TAG-PLACEHOLDER
           ports:
             - containerPort: 8080
           resources:
