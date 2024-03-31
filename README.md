@@ -71,10 +71,11 @@ Sigue estos pasos para configurar la infraestructura y el CI/CD:
    terraform init
    terraform plan
    terraform apply
+7. **Iniciar el Pipeline CI/CD**: Al desplegarse el proyecto de Codepipeline y Codebuild, estos iniciarán automáticamente el pipeline para el despliegue, sin embargo, este proceso fallará debido a que en ese momento el clúster de EKS no se encuentra aún listo para recibir conexiones. Sin embargo una vez completada la creación de toda la infraestructura por parte de Terraform, podrás iniciar manualmente el pipeline de despliegue desde la consola de AWS CodePipeline o puedes hacer un commit en el repositorio para desencadenar el proceso desde la fuente.
 
-7. **Actualizar Credenciales de EKS**: Una vez completada la creación de la infraestructura, AWS CodePipeline iniciará el pipeline para el despliegue, sin embargo, este proceso fallará debido a que es necesario actualizar las credenciales de EKS para que AWS CodeBuild pueda acceder al cluster. Sigue estos pasos para actualizar las credenciales:
+8. **Actualizar Credenciales de EKS**: Como paso adicional para usar `kubectl` y verificar el estado del cluster, es necesario actualizar las credenciales de EKS en el entorno local. Sigue estos pasos para actualizar las credenciales:
 
-   - Autenticación Local con el Cluster EKS: Utiliza el siguiente comando en tu entorno local para autenticarte con el cluster EKS:
+   - o	Utiliza el siguiente comando en tu entorno local para refrescar la autenticación con el cluster EKS:
      ```bash
      aws eks --region <EKS-region> update-kubeconfig --name comm-cluster
      ```
@@ -82,9 +83,6 @@ Sigue estos pasos para configurar la infraestructura y el CI/CD:
      ```bash
      kubectl cluster-info
      ```
-   - Configuración de las Credenciales en AWS Secrets Manager: Ubica el archivo `~/.kube/config` en tu sistema local, copia su contenido y pégalo como un nuevo secreto en AWS Secrets Manager llamado `kubeconfig` en formato plaintext.
-
-8. **Iniciar el Pipeline de Despliegue**: Una vez completados estos pasos, podrás iniciar manualmente el pipeline de despliegue desde AWS CodePipeline o puedes hacer un commit en el repositorio para desencadenar el proceso desde la fuente.
 
 ## Uso de la Aplicación
 
